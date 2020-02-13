@@ -181,7 +181,9 @@ public class Point implements Comparable<Point> {
         StdOut.println("====================================");
         StdOut.println();
         for (Point p : points) {
-            StdOut.println(p.toString());
+            StdOut.print(p.toString());
+            StdOut.print("The slope is: " + p.slopeTo(new Point(0, 0)));
+            StdOut.println();
             //StdOut.print("The slope is: " + p.slopeTo(new Point(0, 0)));
         }
         // print and draw the line segments
