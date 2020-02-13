@@ -16,14 +16,14 @@ public class Point implements Comparable<Point> {
     public static final Comparator<Point> BY_SLOPE = new byOrder();
 
     private static class byOrder implements Comparator<Point> {
-        private final double x = 0;
-        private final double y = 0;
+        private final Point p = new Point(0, 0);
 
         @Override
         public int compare(Point o1, Point o2) {
-            int result = o1.compareTo(o2);
-            StdOut.println("This is from compare method: " + result);
-            return o1.compareTo(o2);
+            if (p.slopeTo(o1) > p.slopeTo(o2)) return 1;
+            else if (p.slopeTo(o2) > p.slopeTo(o1)) return -1;
+                //else if (p.slopeTo(o1) == p.slopeTo(o2)) return 0;
+            else return 0;
         }
     }
 
