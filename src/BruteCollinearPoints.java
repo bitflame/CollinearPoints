@@ -8,7 +8,13 @@ public class BruteCollinearPoints {
     public BruteCollinearPoints(Point[] points) {
         if (points == null) throw new IllegalArgumentException("points array is empty.");
         Arrays.sort(points);//Sort the array by natural order initially to make sure line segments start at bottom
+        for (int i = 0; i < points.length - 1; i++) {
+            if (points[i] == points[i++] || points[i] == null) {
+                throw new IllegalArgumentException("No redundant point allowed in points.");
+            }
+        }
         this.points = points;
+
 
     }   // finds all line segments containing 4 points
 
@@ -22,24 +28,27 @@ public class BruteCollinearPoints {
         //add them to the results array and look further
         //You need to deal with what is the natural order of the points i.e. need to know if a new point is higher or
         //lower than any existing ones in the line segment. This is basically a 4sum problem with target being the first common slope
-
+        int end = points.length - 1;
+        int right = end - 1;
         int segmentsIndex = 0;
-        for (int i = 0; i < points.length - 4; i++) {
-            double temp = points[i].slopeTo(points[i + 1]);
-            lineSegments[segmentsIndex] = new LineSegment(points[i], points[i + 1]);
+        outerloop:
+        for (int i = 0; i < points.length - 1; i++, right--) {
+            double temp = points[i].slopeTo(points[end]);
+            lineSegments[segmentsIndex] = new LineSegment(points[i], points[end]);
             segmentsIndex++;
-            for (int j = i + 2; j < points.length - 2; j++) {
-                if (points[j].slopeTo(points[j + 1]) == temp)
-                    lineSegments[segmentsIndex] = new LineSegment(points[i], points[j + 1]);
+            for (int j = i + 1; j < points.length - 3; j++) {
+                if (points[j].slopeTo(points[right]) == temp) {
+                    end--;
+                    continue outerloop;
+                }
             }
-            if (lineSegments[segmentsIndex].equals(new LineSegment(points[i], points[i + 1]))) {
+            if (lineSegments[segmentsIndex].equals(new LineSegment(points[i], points[end]))) {
                 segmentsIndex--;
             }
         }
         segments = lineSegments.length;
         return lineSegments;
     }               // the line segments
-
 
     public static void main(String[] args) {
         Point[] ps;
