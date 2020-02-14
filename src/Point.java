@@ -16,7 +16,7 @@ public class Point implements Comparable<Point> {
     public static final Comparator<Point> BY_SLOPE = new byOrder();
 
     private static class byOrder implements Comparator<Point> {
-        private final Point p = new Point(0, 0);
+        private Point p = new Point(0, 0);
 
         @Override
         public int compare(Point o1, Point o2) {
@@ -55,8 +55,12 @@ public class Point implements Comparable<Point> {
      * @param that the other point
      */
     public void drawTo(Point that) {
-        /* DO NOT MODIFY */
-        StdDraw.line(this.x, this.y, that.x, that.y);
+        /*  Added the following two lines myself */
+        double thisX = ((double) this.x);
+        double thisY = ((double) this.y);
+        double thatX = ((double) that.x);
+        double thatY = ((double) that.y);
+        StdDraw.line(thisX, thisY, thatX, thatY);
     }
 
     /**
@@ -186,12 +190,23 @@ public class Point implements Comparable<Point> {
             StdOut.println();
             //StdOut.print("The slope is: " + p.slopeTo(new Point(0, 0)));
         }
-        // print and draw the line segments
-        FastCollinearPoints collinear = new FastCollinearPoints(points);
-        for (LineSegment segment : collinear.segments()) {
-            //StdOut.println(segment);
-            //segment.draw();
+        for (Point p : points) {
+            for (Point q : points) {
+                StdOut.println("Slope from " + p + "to " + q + ":" + p.slopeTo(q));
+            }
         }
+        // print and draw the line segments using Brute Force
+        BruteCollinearPoints bc = new BruteCollinearPoints(points);
+        for (LineSegment segment : bc.segments()) {
+            StdOut.println(segment);
+            segment.draw();
+        }
+        // print and draw the line segments
+        /*FastCollinearPoints collinear = new FastCollinearPoints(points);
+        for (LineSegment segment : collinear.segments()) {
+            StdOut.println(segment);
+            segment.draw();
+        }*/
         StdDraw.show();
     }
 }

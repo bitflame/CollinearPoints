@@ -8,11 +8,11 @@ public class BruteCollinearPoints {
     public BruteCollinearPoints(Point[] points) {
         if (points == null) throw new IllegalArgumentException("points array is empty.");
         Arrays.sort(points);//Sort the array by natural order initially to make sure line segments start at bottom
-        for (int i = 0; i < points.length - 1; i++) {
+        /*for (int i = 0; i < points.length - 1; i++) {
             if (points[i] == points[i++] || points[i] == null) {
                 throw new IllegalArgumentException("No redundant point allowed in points.");
             }
-        }
+        }*/
         this.points = points;
 
 
@@ -23,32 +23,35 @@ public class BruteCollinearPoints {
     }      // the number of line segments
 
     public LineSegment[] segments() {
-        LineSegment[] lineSegments = new LineSegment[points.length - 1];
-        //take a point from the array, check the slope it has with every other point, and if / when you find three
-        //add them to the results array and look further
-        //You need to deal with what is the natural order of the points i.e. need to know if a new point is higher or
-        //lower than any existing ones in the line segment. This is basically a 4sum problem with target being the first common slope
-        int end = points.length - 1;
-        int right = end - 1;
-        int segmentsIndex = 0;
-        outerloop:
-        for (int i = 0; i < points.length - 1; i++, right--) {
-            double temp = points[i].slopeTo(points[end]);
-            lineSegments[segmentsIndex] = new LineSegment(points[i], points[end]);
-            segmentsIndex++;
-            for (int j = i + 1; j < points.length - 3; j++) {
-                if (points[j].slopeTo(points[right]) == temp) {
-                    end--;
-                    continue outerloop;
+        int left = 0;
+        int right = points.length - 2;
+        int lsCount = 0;
+        LineSegment[] ls = new LineSegment[20];
+        for (int i = 0; i < points.length - 1; i++) {
+
+            LineSegment maxLineSeg;
+            for (int j = i + 1; j < points.length - 2; j++) {
+                double target = points[i].slopeTo(points[j]);
+                left = j + 1;
+                if (target < points[j].slopeTo(points[left])) left++;
+                if (target > points[j].slopeTo(points[right])) right--;
+                if (target == points[j].slopeTo(points[right])) {
+                    ls[lsCount] = new LineSegment(points[i], points[right]);
+                    right--;
+                    lsCount++;
+                    continue;
+                }
+                if (target == points[j].slopeTo(points[left])) {
+                    ls[lsCount] = new LineSegment(points[i], points[left]);
+                    lsCount++;
+                    left++;
+                    continue;
                 }
             }
-            if (lineSegments[segmentsIndex].equals(new LineSegment(points[i], points[end]))) {
-                segmentsIndex--;
-            }
         }
-        segments = lineSegments.length;
-        return lineSegments;
-    }               // the line segments
+        return ls;
+    }
+    // the line segments
 
     public static void main(String[] args) {
         Point[] ps;
