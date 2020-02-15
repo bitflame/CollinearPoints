@@ -24,28 +24,29 @@ public class BruteCollinearPoints {
 
     public LineSegment[] segments() {
         int left = 0;
-        int right = points.length - 2;
+        int right = points.length - 1;
         int lsCount = 0;
-        LineSegment[] ls = new LineSegment[20];
-        for (int i = 0; i < points.length - 1; i++) {
-
+        LineSegment[] ls = new LineSegment[40];
+        for (int i = 0; i < points.length - 4; i++) {
             LineSegment maxLineSeg;
-            for (int j = i + 1; j < points.length - 2; j++) {
+            for (int j = i + 1; j < points.length - 3; j++) {
                 double target = points[i].slopeTo(points[j]);
                 left = j + 1;
-                if (target < points[j].slopeTo(points[left])) left++;
-                if (target > points[j].slopeTo(points[right])) right--;
-                if (target == points[j].slopeTo(points[right])) {
-                    ls[lsCount] = new LineSegment(points[i], points[right]);
-                    right--;
-                    lsCount++;
-                    continue;
-                }
-                if (target == points[j].slopeTo(points[left])) {
-                    ls[lsCount] = new LineSegment(points[i], points[left]);
-                    lsCount++;
-                    left++;
-                    continue;
+                while (right > left) {
+                    if (points[j].slopeTo(points[left]) < target) left++;
+                    if (points[j].slopeTo(points[right]) > target) right--;
+                    if (target == points[j].slopeTo(points[right])) {
+                        ls[lsCount] = new LineSegment(points[i], points[right]);
+                        right--;
+                        lsCount++;
+                    }
+                    if (target == points[j].slopeTo(points[left])) {
+                        ls[lsCount] = new LineSegment(points[i], points[left]);
+                        lsCount++;
+                        left++;
+                    }
+                    //right--;
+                    //left++;
                 }
             }
         }

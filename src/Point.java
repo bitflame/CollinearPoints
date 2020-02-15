@@ -149,7 +149,7 @@ public class Point implements Comparable<Point> {
         }
 
         // draw the points
-        StdDraw.enableDoubleBuffering();
+        //StdDraw.enableDoubleBuffering();
         StdDraw.setPenRadius(0.015);
         StdDraw.setXscale(0, 32768);
         StdDraw.setYscale(0, 32768);
@@ -192,12 +192,14 @@ public class Point implements Comparable<Point> {
         }
         for (Point p : points) {
             for (Point q : points) {
+
                 StdOut.println("Slope from " + p + "to " + q + ":" + p.slopeTo(q));
             }
         }
         // print and draw the line segments using Brute Force
         BruteCollinearPoints bc = new BruteCollinearPoints(points);
         for (LineSegment segment : bc.segments()) {
+            if (segment == null) break;
             StdOut.println(segment);
             segment.draw();
         }
