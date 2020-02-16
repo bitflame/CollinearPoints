@@ -23,30 +23,18 @@ public class BruteCollinearPoints {
     }      // the number of line segments
 
     public LineSegment[] segments() {
-        int left = 0;
-        int right = points.length - 1;
         int lsCount = 0;
         LineSegment[] ls = new LineSegment[40];
-        for (int i = 0; i < points.length - 4; i++) {
-            LineSegment maxLineSeg;
-            for (int j = i + 1; j < points.length - 3; j++) {
+        for (int i = 0; i < points.length - 1; i++) {
+            int lineSegIns = 0;
+            for (int j = i + 1; j < points.length - 1; j++) {
                 double target = points[i].slopeTo(points[j]);
-                left = j + 1;
-                while (right > left) {
-                    if (points[j].slopeTo(points[left]) < target) left++;
-                    if (points[j].slopeTo(points[right]) > target) right--;
-                    if (target == points[j].slopeTo(points[right])) {
-                        ls[lsCount] = new LineSegment(points[i], points[right]);
-                        right--;
-                        lsCount++;
+                ls[lineSegIns] = new LineSegment(points[i], points[j]);
+                lineSegIns++;
+                for (int k = j + 1; k < points.length; k++) {
+                    if (points[j].slopeTo(points[k]) == target) {
+                        ls[lineSegIns] = new LineSegment(points[i], points[k]);
                     }
-                    if (target == points[j].slopeTo(points[left])) {
-                        ls[lsCount] = new LineSegment(points[i], points[left]);
-                        lsCount++;
-                        left++;
-                    }
-                    //right--;
-                    //left++;
                 }
             }
         }
