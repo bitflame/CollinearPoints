@@ -269,11 +269,11 @@ public class Point implements Comparable<Point> {
 
                 StdOut.println("Slope from " + p + "to " + q + ":" + p.slopeTo(q));
             }
-        }*/
+        }
         // print and draw the line segments using Brute Force
         for (Point p : points) {
             p.draw();
-        }
+        }*/
         BruteCollinearPoints bc = new BruteCollinearPoints(points);
         for (LineSegment segment : bc.segments()) {
             if (segment == null) break;
