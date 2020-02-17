@@ -4,18 +4,18 @@ public class BruteCollinearPoints {
     int pCount = 4;
     Point[] points = new Point[pCount];
     int segments;
+    private LineSegment[] ls = new LineSegment[60];
+    private int lsCount = 0;
+
 
     public BruteCollinearPoints(Point[] points) {
         if (points == null) throw new IllegalArgumentException("points array is empty.");
-        Arrays.sort(points);//Sort the array by natural order initially to make sure line segments start at bottom
         /*for (int i = 0; i < points.length - 1; i++) {
             if (points[i] == points[i++] || points[i] == null) {
                 throw new IllegalArgumentException("No redundant point allowed in points.");
             }
         }*/
         this.points = points;
-
-
     }   // finds all line segments containing 4 points
 
     public int numberOfSegments() {
@@ -23,24 +23,34 @@ public class BruteCollinearPoints {
     }      // the number of line segments
 
     public LineSegment[] segments() {
-        int lsCount = 0;
-        LineSegment[] ls = new LineSegment[40];
-        for (int i = 0; i < points.length - 1; i++) {
-            int lineSegIns = 0;
-            for (int j = i + 1; j < points.length - 1; j++) {
-                double target = points[i].slopeTo(points[j]);
-                ls[lineSegIns] = new LineSegment(points[i], points[j]);
-                lineSegIns++;
-                for (int k = j + 1; k < points.length; k++) {
-                    if (points[j].slopeTo(points[k]) == target) {
-                        ls[lineSegIns] = new LineSegment(points[i], points[k]);
+        LineSegment[] result = new LineSegment[60];
+        Arrays.sort(points);//Sort the array by natural order initially to make sure line segments start at bottom
+        ls = new LineSegment[100];
+        for (Point p : points) {
+            result = segments(p, ls);
+        }
+        return result;
+    }
+
+    // the line segments
+    private LineSegment[] segments(Point origin, LineSegment[] ls) {
+        //sort the array based thee slope of points to the origin - need to make sure it is working
+        // you can also do: Array.sort(points, point[0].slopeOrder();
+        Arrays.sort(points, origin.slopeOrder());
+        //Find the points that have the same slope wrt origin and connect to it via 3 or more other points.
+        int lineSegIns = 0;
+        for (int i = 1; i < points.length; i++) {
+            for (int j = 0; j < points.length; j++) {
+                for (int k = 0; k < points.length; k++) {
+                    if ((points[i].slopeTo(origin) == points[j].slopeTo(points[i])) && (points[j].slopeTo(points[k]) == points[i].slopeTo(points[j]))) {
+                        ls[lineSegIns] = new LineSegment(origin, points[k]);
+                        lineSegIns++;
                     }
                 }
             }
         }
         return ls;
     }
-    // the line segments
 
     public static void main(String[] args) {
         Point[] ps;

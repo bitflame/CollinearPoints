@@ -2,30 +2,14 @@ import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.StdDraw;
 import edu.princeton.cs.algs4.StdOut;
 
-import java.util.Arrays;
 import java.util.Comparator;
 
 import static java.lang.Double.POSITIVE_INFINITY;
 
 public class Point implements Comparable<Point> {
 
-
     private final int x;     // x-coordinate of this point
     private final int y;     // y-coordinate of this point
-
-    public static final Comparator<Point> BY_SLOPE = new byOrder();
-
-    private static class byOrder implements Comparator<Point> {
-        private Point p = new Point(0, 0);
-
-        @Override
-        public int compare(Point o1, Point o2) {
-            if (p.slopeTo(o1) > p.slopeTo(o2)) return 1;
-            else if (p.slopeTo(o2) > p.slopeTo(o1)) return -1;
-                //else if (p.slopeTo(o1) == p.slopeTo(o2)) return 0;
-            else return 0;
-        }
-    }
 
     /**
      * Initializes a new point.
@@ -84,7 +68,7 @@ public class Point implements Comparable<Point> {
         else if (that.y == this.y) return +0;
         else if (that.x == this.x) return POSITIVE_INFINITY;
         else {
-            slope = (Math.abs(thatY - thisY) / Math.abs(thatX - thisX));
+            slope = ((thatY - thisY) / (thatX - thisX));
         }
         return slope;
 
@@ -103,10 +87,11 @@ public class Point implements Comparable<Point> {
      * argument point
      */
     public int compareTo(Point that) {
-        if (this.y == that.y) {
-            return Integer.compare(this.x, that.x);
-        } else if (this.y > that.y) return 1;
-        else return -1;
+        if (this.y < that.y) return -1;
+        if (this.y > that.y) return +1;
+        if (this.x < that.x) return -1;
+        if (this.x > that.x) return +1;
+        return 0;
     }
 
     /**
@@ -117,7 +102,17 @@ public class Point implements Comparable<Point> {
      */
     public Comparator<Point> slopeOrder() {
         /* YOUR CODE HERE */
-        return new byOrder();
+        //Point p = new Point(this.x, this.y);
+        Point p = new Point(this.x, this.y);
+        Comparator<Point> com = new Comparator<Point>() {
+            @Override
+            public int compare(Point o1, Point o2) {
+                if (p.slopeTo(o1) < p.slopeTo(o2)) return 1;
+                else if (p.slopeTo(o1) > p.slopeTo(o2)) return -1;
+                else return 0;
+            }
+        };
+        return com;
     }
 
 
@@ -137,7 +132,21 @@ public class Point implements Comparable<Point> {
      * Unit tests the Point data type.
      */
     public static void main(String[] args) {
-
+        /*Point origin = new Point(0, 0);
+        Point p1 = new Point(1000, 2000);
+        Point p2 = new Point(2000, 1000);
+        Point p3 = new Point(2000, 2000);
+        Point p4 = new Point(1000, 2000);
+        StdOut.println("Slope of P1 P2 P3 P4 wrt origin: ");
+        StdOut.println(origin.slopeTo(p1) + " " + origin.slopeTo(p2) + " " + origin.slopeTo(p3) + " " + origin.slopeTo(p4));
+        StdOut.println("Slope of origin P2 P3 P4 wrt p1: ");
+        StdOut.println(p1.slopeTo(origin) + " " + p1.slopeTo(p2) + " " + p1.slopeTo(p3) + " " + p1.slopeTo(p4));
+        StdOut.println("Expected: 1");
+        StdOut.println(p1.compareTo(p2));
+        StdOut.println("Expected: -1");
+        StdOut.println(p1.compareTo(p3));
+        StdOut.println("Expected: 0");
+        StdOut.println(p1.compareTo(p4));*/
         // read the n points from a file
         In in = new In(args[0]);
         int n = in.readInt();
@@ -147,13 +156,12 @@ public class Point implements Comparable<Point> {
             int y = in.readInt();
             points[i] = new Point(x, y);
         }
-
         // draw the points
         //StdDraw.enableDoubleBuffering();
         StdDraw.setPenRadius(0.015);
         StdDraw.setXscale(0, 32768);
         StdDraw.setYscale(0, 32768);
-        StdOut.println("Before Sorting:");
+        /*StdOut.println("Before Sorting:");
         StdOut.println("====================================");
         StdOut.println();
         for (Point p : points) {
@@ -177,17 +185,83 @@ public class Point implements Comparable<Point> {
         StdOut.println();
         for (Point p : points) {
             StdOut.println(p.toString());
-            StdOut.print("The slope is: " + p.slopeTo(new Point(0, 0)));
+            //StdOut.print("The slope is: " + p.slopeTo(new Point(0, 0)));
         }
         StdOut.println();
-        Arrays.sort(points, BY_SLOPE);
-        StdOut.println("After Sorting By Slope:");
+        Arrays.sort(points, points[0].slopeOrder());
+        StdOut.println("After Sorting By Slope wrt p[0]:");
         StdOut.println("====================================");
         StdOut.println();
         for (Point p : points) {
             StdOut.print(p.toString());
-            StdOut.print("The slope is: " + p.slopeTo(new Point(0, 0)));
-            StdOut.println();
+            //StdOut.print("The slope is: " + p.slopeTo(new Point(0, 0)));
+            //StdOut.println();
+            //StdOut.print("The slope is: " + p.slopeTo(new Point(0, 0)));
+        }
+        StdOut.println();
+        Arrays.sort(points, points[1].slopeOrder());
+        StdOut.println("After Sorting By Slope wrt p[1]:");
+        StdOut.println("====================================");
+        StdOut.println();
+        for (Point p : points) {
+            StdOut.print(p.toString());
+            //StdOut.print("The slope is: " + p.slopeTo(new Point(0, 0)));
+            //StdOut.println();
+            //StdOut.print("The slope is: " + p.slopeTo(new Point(0, 0)));
+        }
+        StdOut.println();
+        Arrays.sort(points, points[2].slopeOrder());
+        StdOut.println("After Sorting By Slope wrt p[2]:");
+        StdOut.println("====================================");
+        StdOut.println();
+        for (Point p : points) {
+            StdOut.print(p.toString());
+            //StdOut.print("The slope is: " + p.slopeTo(new Point(0, 0)));
+            //StdOut.println();
+            //StdOut.print("The slope is: " + p.slopeTo(new Point(0, 0)));
+        }
+        StdOut.println();
+        Arrays.sort(points, points[3].slopeOrder());
+        StdOut.println("After Sorting By Slope wrt p[3]:");
+        StdOut.println("====================================");
+        StdOut.println();
+        for (Point p : points) {
+            StdOut.print(p.toString());
+            //StdOut.print("The slope is: " + p.slopeTo(new Point(0, 0)));
+            //StdOut.println();
+            //StdOut.print("The slope is: " + p.slopeTo(new Point(0, 0)));
+        }
+        StdOut.println();
+        Arrays.sort(points, points[4].slopeOrder());
+        StdOut.println("After Sorting By Slope wrt p[4]:");
+        StdOut.println("====================================");
+        StdOut.println();
+        for (Point p : points) {
+            StdOut.print(p.toString());
+            //StdOut.print("The slope is: " + p.slopeTo(new Point(0, 0)));
+            //StdOut.println();
+            //StdOut.print("The slope is: " + p.slopeTo(new Point(0, 0)));
+        }
+        StdOut.println();
+        Arrays.sort(points, points[5].slopeOrder());
+        StdOut.println("After Sorting By Slope wrt p[5]:");
+        StdOut.println("====================================");
+        StdOut.println();
+        for (Point p : points) {
+            StdOut.print(p.toString());
+            //StdOut.print("The slope is: " + p.slopeTo(new Point(0, 0)));
+            //StdOut.println();
+            //StdOut.print("The slope is: " + p.slopeTo(new Point(0, 0)));
+        }
+        StdOut.println();
+        Arrays.sort(points, points[5].slopeOrder());
+        StdOut.println("After Sorting By Slope wrt p[6]:");
+        StdOut.println("====================================");
+        StdOut.println();
+        for (Point p : points) {
+            StdOut.print(p.toString());
+            //StdOut.print("The slope is: " + p.slopeTo(new Point(0, 0)));
+            //StdOut.println();
             //StdOut.print("The slope is: " + p.slopeTo(new Point(0, 0)));
         }
         for (Point p : points) {
@@ -195,20 +269,24 @@ public class Point implements Comparable<Point> {
 
                 StdOut.println("Slope from " + p + "to " + q + ":" + p.slopeTo(q));
             }
-        }
+        }*/
         // print and draw the line segments using Brute Force
+        for (Point p : points) {
+            p.draw();
+        }
         BruteCollinearPoints bc = new BruteCollinearPoints(points);
         for (LineSegment segment : bc.segments()) {
             if (segment == null) break;
             StdOut.println(segment);
             segment.draw();
         }
+        StdDraw.show();
         // print and draw the line segments
         /*FastCollinearPoints collinear = new FastCollinearPoints(points);
         for (LineSegment segment : collinear.segments()) {
             StdOut.println(segment);
             segment.draw();
-        }*/
-        StdDraw.show();
+        }
+        */
     }
 }
