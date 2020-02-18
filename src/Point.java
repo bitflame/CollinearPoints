@@ -282,11 +282,19 @@ public class Point implements Comparable<Point> {
         }
         StdDraw.show();
         // print and draw the line segments
+        for (Point p : points) {
+            p.draw();
+        }
+        StdDraw.show();
         /*FastCollinearPoints collinear = new FastCollinearPoints(points);
         for (LineSegment segment : collinear.segments()) {
             StdOut.println(segment);
-            segment.draw();
+            try {
+                segment.draw();
+            } catch (NullPointerException e) {
+                StdOut.println(e.getMessage() + "Th segment is null");
+            }
         }
-        */
+        StdDraw.show();*/
     }
 }
