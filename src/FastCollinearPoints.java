@@ -26,15 +26,15 @@ public class FastCollinearPoints {
         // If slopes of two segments are the same, and they have a common point(s) use the furthest
         // points to represent the segment
         LineSegment[] ls = new LineSegment[40];
-        for (Point p : points) {
-            Arrays.sort(points, p.slopeOrder());
-            for (int i = 0; i < points.length - 1; i++) {
-                while (p.slopeTo(points[i]) == p.slopeTo(points[i + 1])) {
-                    //add point[i] to a line segment, and increment LineSegment size ()
-                    ls[segments] = new LineSegment(points[i], points[i + 1]);
-                    i++;
+        for (int i = 0; i < points.length; i++) {
+            Arrays.sort(points);
+            Arrays.sort(points, points[i].slopeOrder());
+            Point origin = points[0];
+            for (int j = 0; j < points.length - 1; j++) {
+                if ((origin.compareTo(points[j]) < 0) && (origin.slopeTo(points[j]) == points[j].slopeTo(points[j + 1]))) {
+                    ls[segments] = new LineSegment(origin, points[j + 1]);
+                    segments++;
                 }
-                segments++;
             }
         }
         return ls;

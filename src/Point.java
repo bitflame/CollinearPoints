@@ -91,6 +91,11 @@ public class Point implements Comparable<Point> {
         if (this.y > that.y) return +1;
         if (this.x < that.x) return -1;
         if (this.x > that.x) return +1;
+        if (this.y == that.y) {
+            if (this.x < that.x) return -1;
+            if (this.x > that.x) return +1;
+            if (this.x == that.x) return 0;
+        }
         return 0;
     }
 
@@ -274,19 +279,20 @@ public class Point implements Comparable<Point> {
         for (Point p : points) {
             p.draw();
         }*/
-        BruteCollinearPoints bc = new BruteCollinearPoints(points);
+        for (Point p : points) {
+            p.draw();
+        }
+        StdDraw.show();
+        /* BruteCollinearPoints bc = new BruteCollinearPoints(points);
         for (LineSegment segment : bc.segments()) {
             if (segment == null) break;
             StdOut.println(segment);
             segment.draw();
         }
-        StdDraw.show();
-        // print and draw the line segments
-        for (Point p : points) {
-            p.draw();
-        }
-        StdDraw.show();
-        /*FastCollinearPoints collinear = new FastCollinearPoints(points);
+        StdDraw.show();*/
+        // print and draw the line segments/**/
+
+        FastCollinearPoints collinear = new FastCollinearPoints(points);
         for (LineSegment segment : collinear.segments()) {
             StdOut.println(segment);
             try {
@@ -295,6 +301,6 @@ public class Point implements Comparable<Point> {
                 StdOut.println(e.getMessage() + "Th segment is null");
             }
         }
-        StdDraw.show();*/
+        StdDraw.show();
     }
 }
