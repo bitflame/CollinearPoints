@@ -4,8 +4,6 @@ import edu.princeton.cs.algs4.StdOut;
 
 import java.util.Comparator;
 
-import static java.lang.Double.POSITIVE_INFINITY;
-
 public class Point implements Comparable<Point> {
 
     private final int x;     // x-coordinate of this point
@@ -66,7 +64,7 @@ public class Point implements Comparable<Point> {
         double thatY = that.y;
         if (that.x == this.x && that.y == this.y) return Double.NEGATIVE_INFINITY;
         else if (that.y == this.y) return +0;
-        else if (that.x == this.x) return POSITIVE_INFINITY;
+        else if (that.x == this.x) return Double.POSITIVE_INFINITY;
         else {
             slope = ((thatY - thisY) / (thatX - thisX));
         }

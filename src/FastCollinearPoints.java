@@ -22,80 +22,99 @@ public class FastCollinearPoints {
     }      // the number of line segments
 
     public LineSegment[] segments() {
-        LineSegment[] ls = new LineSegment[1];
-        Arrays.sort(points, Point::compareTo);
-        StdOut.println("After doing sort by order:  ");
-        for (Point p : points) {
-            StdOut.print("Point p:  " + p);
-        }
-        StdOut.println();
-        Arrays.sort(points);
-        StdOut.println("After doing default sort. They should be the same thing:  ");
-        for (Point p : points) {
-            StdOut.print("Point p:  " + p);
-        }
-        StdOut.println();
-        Arrays.sort(points);
-        Point origin = points[0];//This changes after the following sort
-        for (int i = points.length; i > 0; i--) {
-
+        LineSegment[] ls = new LineSegment[2];
+        int segCount = 0;
+//        Arrays.sort(points, Point::compareTo);
+//        StdOut.println("After doing sort by order:  ");
+//        for (Point p : points) {
+//            StdOut.print("Point p:  " + p);
+//        }
+//        StdOut.println();
+//        Arrays.sort(points);
+//        StdOut.println("After doing default sort. They should be the same thing:  ");
+//        for (Point p : points) {
+//            StdOut.print("Point p:  " + p);
+//        }
+//        StdOut.println();
+        Point origin;
+        for (int i = 0; i < points.length - 1; i++) {
+            Arrays.sort(points);
+            origin = points[i];
+            Point[] collinierEndPoints = new Point[10];
+            collinierEndPoints[0] = origin;
+            collinierEndPoints[1] = points[i + 1];
+            double currentSlope = origin.slopeTo(points[i + 1]);
             Arrays.sort(points, origin.slopeOrder());
             StdOut.println("After sorting by slope wrt origin: ");
             for (Point p : points) {
                 StdOut.println("Original point: " + origin + "Point p:  " + p + "Slope to p: " + origin.slopeTo(p));
             }
-            int counter = i;
-            Point[] currSeg = new Point[points.length];
-            currSeg[0] = origin;
-            int currSegCounter = 0;
-            while (counter > 1) {
-                if (origin.slopeTo(points[counter - 1]) == origin.slopeTo(points[counter - 2])
-                        && origin.compareTo(points[counter - 1]) != 0) {
-                    currSegCounter++;
-                    currSeg[currSegCounter] = points[counter - 1];
+
+
+            int next = 1;
+            //The slope sorted array ends with NEGATIVE_INFINITY slope
+            for (int j = 1; j < points.length - 1; j++) {
+
+                if (currentSlope == points[j].slopeTo(points[j + 1])) {
+                    next++;
+                    collinierEndPoints[next] = points[j + 1];
                 }
-                counter--;//build an array of points here and then sort by natural order
+
+
             }
-            if (counter <= (i - 2)) {
-                currSegCounter++;
-                currSeg[currSegCounter] = points[counter - 1];
-                Point[] temp = new Point[currSegCounter + 1];
-                for (int j = 0; j <= currSegCounter; j++) {
-                    temp[j] = currSeg[j];
+            if (next >= 3) {
+                if (collinierEndPoints[0].compareTo(collinierEndPoints[1]) < 0) {
+                    //Only create a segment if [0] is lower than [1]. This ensures you
+                    //are starting from the right location. It is not possible for the collection to be a sub segment since
+                    //the for loop above goes through every point each time.
+                    //Arrays.sort(collinierEndPoints);
+                    Arrays.sort(collinierEndPoints, Point::compareTo);
+                    ls[maxSegmentCount] = new LineSegment(collinierEndPoints[0], collinierEndPoints[next]);
+                    maxSegmentCount++;
                 }
-                StdOut.println("Here are the points that had the same slope and created a segment.");
-                for (Point p : temp) {
-                    StdOut.print(p);
-                }
-                Arrays.sort(temp);
-                StdOut.println("Here are the points that had the same slope and created a segment, after sorting by order.");
-                for (Point p : temp) {
-                    StdOut.print(p);
-                }
-                if (segCount >= (ls.length - 1)) {
-                    ls = resizeLineSeg(ls, (segCount + 1) * 2);
-                }
-                ls[segCount] = new LineSegment(origin, temp[currSegCounter - 1]);
-                segCount++;
-                maxSegmentCount++;
             }
+
+//            for (Point p : collinierEndPoints) {
+//                StdOut.println("Original point: " + origin + "Point p in Collinier Array:  " + p + "Slope to p: " + origin.slopeTo(p));
+//            }
+//
+//            ls[maxSegmentCount] = new LineSegment(collinierArray[0], collinierArray[collinierArray.length - 1]);
+//                StdOut.println("Here are the points that had the same slope and created a segment.");
+//                for (Point p : temp) {
+//                    StdOut.print(p);
+//                }
+//            Arrays.sort(temp);
+//                StdOut.println("Here are the points that had the same slope and created a segment, after sorting by order.");
+//                for (Point p : temp) {
+//                    StdOut.print(p);
+//                }
+//            if (segCount >= (ls.length - 1)) {
+//                ls = resizeLineSeg(ls, (segCount + 1) * 2);
+//            }
+//            ls[segCount] = new LineSegment(origin, temp[currSegLength - 1]);
+//            segCount++;
+//            maxSegmentCount++;
+//        }
+//        origin = points[i - 1];
         }
-        ls = resizeLineSeg(ls, maxSegmentCount);
+
+
+//    resizeLineSeg(ls, maxSegmentCount);
         return ls;
     }
 
-    private static LineSegment[] resizeLineSeg(LineSegment[] lineSegment, int capacity) {
-        LineSegment[] temp = new LineSegment[capacity];
-        int i = 0;
-        for (LineSegment s : lineSegment) {
-            if (s != null) {
-                temp[i] = s;
-                i++;
-            }
-        }
-        lineSegment = temp;
-        return lineSegment;
-    }
+//    private static LineSegment[] resizeLineSeg(LineSegment[] lineSegment, int capacity) {
+//        LineSegment[] temp = new LineSegment[capacity];
+//        int i = 0;
+//        for (LineSegment s : lineSegment) {
+//            if (s != null) {
+//                temp[i] = s;
+//                i++;
+//            }
+//        }
+//        lineSegment = temp;
+//        return lineSegment;
+//    }
 
     // the line segments
     public static void main(String[] args) {
