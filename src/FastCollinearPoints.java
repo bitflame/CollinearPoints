@@ -37,32 +37,38 @@ public class FastCollinearPoints {
 //        }
 //        StdOut.println();
         Point origin;
-        Arrays.sort(points);
-        for (int i = 0; i < points.length - 1; i++) {
 
+//        StdOut.println("After sorting using default sort: ");
+//        for (Point p : points) {
+//            StdOut.println("Point p:  " + p);
+//        }
+        for (int i = 0; i < points.length - 1; i++) {
+            Arrays.sort(points);
             origin = points[i];
             Point[] collinierEndPoints = new Point[10];
             collinierEndPoints[0] = origin;
             //collinierEndPoints[1] = points[i + 1];
-            double currentSlope = origin.slopeTo(points[i + 1]);
+
             Arrays.sort(points, origin.slopeOrder());
-            StdOut.println("After sorting by slope wrt origin: ");
-            for (Point p : points) {
-                StdOut.println("Original point: " + origin + "Point p:  " + p + "Slope to p: " + origin.slopeTo(p));
-            }
+//            StdOut.println("After sorting by slope wrt origin: ");
+//            for (Point p : points) {
+//                StdOut.println("Original point: " + origin + "Point p:  " + p + "Slope to p: " + origin.slopeTo(p));
+//            }
 
 
             int next = 1;
             //The slope sorted array ends with NEGATIVE_INFINITY slope
             for (int j = 0; j < points.length - 1; j++) {
 
-                if (currentSlope == origin.slopeTo(points[j + 1])) {
+                if (origin.slopeTo(points[j]) == origin.slopeTo(points[j + 1])) {
+                    collinierEndPoints[next] = points[j];
+                    next++;
                     collinierEndPoints[next] = points[j + 1];
                     next++;
                 }
             }
             if (next >= 3) {
-                if (collinierEndPoints[0] == origin) {
+                if (collinierEndPoints[0] == origin && origin.compareTo(collinierEndPoints[1]) < 0) {
                     //Only create a segment if [0] is lower than [1]. This ensures you
                     //are starting from the right location. It is not possible for the collection to be a sub segment since
                     //the for loop above goes through every point each time.
@@ -70,7 +76,9 @@ public class FastCollinearPoints {
                     //Arrays.sort(collinierEndPoints, Point::compareTo);
                     collinierEndPoints = pointArrayResize(collinierEndPoints, next);
                     Arrays.sort(collinierEndPoints);
+
                     ls[maxSegmentCount] = new LineSegment(collinierEndPoints[0], collinierEndPoints[next - 1]);
+                    if (maxSegmentCount == ls.length) ls = resizeLineSeg(ls, (2 * maxSegmentCount));
                     maxSegmentCount++;
                 }
             }
@@ -96,7 +104,7 @@ public class FastCollinearPoints {
 //            segCount++;
 //            maxSegmentCount++;
         }
-        ls = resizeLineSeg(ls, --maxSegmentCount);
+        ls = resizeLineSeg(ls, (maxSegmentCount));
         return ls;
     }
 
