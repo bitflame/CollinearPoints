@@ -22,7 +22,7 @@ public class FastCollinearPoints {
     }      // the number of line segments
 
     public LineSegment[] segments() {
-        LineSegment[] ls = new LineSegment[2];
+        LineSegment[] ls = new LineSegment[10];
         int segCount = 0;
 //        Arrays.sort(points, Point::compareTo);
 //        StdOut.println("After doing sort by order:  ");
@@ -37,12 +37,13 @@ public class FastCollinearPoints {
 //        }
 //        StdOut.println();
         Point origin;
+        Arrays.sort(points);
         for (int i = 0; i < points.length - 1; i++) {
-            Arrays.sort(points);
+
             origin = points[i];
             Point[] collinierEndPoints = new Point[10];
             collinierEndPoints[0] = origin;
-            collinierEndPoints[1] = points[i + 1];
+            //collinierEndPoints[1] = points[i + 1];
             double currentSlope = origin.slopeTo(points[i + 1]);
             Arrays.sort(points, origin.slopeOrder());
             StdOut.println("After sorting by slope wrt origin: ");
@@ -53,23 +54,23 @@ public class FastCollinearPoints {
 
             int next = 1;
             //The slope sorted array ends with NEGATIVE_INFINITY slope
-            for (int j = 1; j < points.length - 1; j++) {
+            for (int j = 0; j < points.length - 1; j++) {
 
-                if (currentSlope == points[j].slopeTo(points[j + 1])) {
-                    next++;
+                if (currentSlope == origin.slopeTo(points[j + 1])) {
                     collinierEndPoints[next] = points[j + 1];
+                    next++;
                 }
-
-
             }
             if (next >= 3) {
-                if (collinierEndPoints[0].compareTo(collinierEndPoints[1]) < 0) {
+                if (collinierEndPoints[0] == origin) {
                     //Only create a segment if [0] is lower than [1]. This ensures you
                     //are starting from the right location. It is not possible for the collection to be a sub segment since
                     //the for loop above goes through every point each time.
                     //Arrays.sort(collinierEndPoints);
-                    Arrays.sort(collinierEndPoints, Point::compareTo);
-                    ls[maxSegmentCount] = new LineSegment(collinierEndPoints[0], collinierEndPoints[next]);
+                    //Arrays.sort(collinierEndPoints, Point::compareTo);
+                    collinierEndPoints = pointArrayResize(collinierEndPoints, next);
+                    Arrays.sort(collinierEndPoints);
+                    ls[maxSegmentCount] = new LineSegment(collinierEndPoints[0], collinierEndPoints[next - 1]);
                     maxSegmentCount++;
                 }
             }
@@ -94,27 +95,28 @@ public class FastCollinearPoints {
 //            ls[segCount] = new LineSegment(origin, temp[currSegLength - 1]);
 //            segCount++;
 //            maxSegmentCount++;
-//        }
-//        origin = points[i - 1];
         }
-
-
-//    resizeLineSeg(ls, maxSegmentCount);
+        ls = resizeLineSeg(ls, --maxSegmentCount);
         return ls;
     }
 
-//    private static LineSegment[] resizeLineSeg(LineSegment[] lineSegment, int capacity) {
-//        LineSegment[] temp = new LineSegment[capacity];
-//        int i = 0;
-//        for (LineSegment s : lineSegment) {
-//            if (s != null) {
-//                temp[i] = s;
-//                i++;
-//            }
-//        }
-//        lineSegment = temp;
-//        return lineSegment;
-//    }
+    private static Point[] pointArrayResize(Point[] pointArray, int capacity) {
+        Point[] temp = new Point[capacity];
+        for (int i = 0; i < capacity; i++) {
+            temp[i] = pointArray[i];
+        }
+        pointArray = temp;
+        return pointArray;
+    }
+
+    private static LineSegment[] resizeLineSeg(LineSegment[] lineSegment, int capacity) {
+        LineSegment[] temp = new LineSegment[capacity];
+        for (int i = 0; i < capacity; i++) {
+            temp[i] = lineSegment[i];
+        }
+        lineSegment = temp;
+        return lineSegment;
+    }
 
     // the line segments
     public static void main(String[] args) {
