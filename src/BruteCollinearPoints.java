@@ -7,9 +7,9 @@ import java.util.Arrays;
 public class BruteCollinearPoints {
     int pCount = 4;
     Point[] points = new Point[pCount];
-    int segments;
-    private LineSegment[] ls = new LineSegment[60];
-    private int lsCount = 0;
+    int lineSegIns = 0;
+    private LineSegment[] ls = new LineSegment[3];
+    //private int lsCount = 0;
 
 
     public BruteCollinearPoints(Point[] points) {
@@ -23,40 +23,43 @@ public class BruteCollinearPoints {
     }   // finds all line segments containing 4 points
 
     public int numberOfSegments() {
-        return segments;
+        return lineSegIns;
     }      // the number of line segments
 
-    public LineSegment[] segments() {
-        LineSegment[] result = new LineSegment[60];
-        Arrays.sort(points);//Sort the array by natural order initially to make sure line segments start at bottom
-        ls = new LineSegment[100];
-        for (Point p : points) {
-            result = segments(p, ls);
-        }
-        return result;
-    }
 
     // the line segments
-    private LineSegment[] segments(Point origin, LineSegment[] ls) {
+    public LineSegment[] segments() {
         //sort the array based thee slope of points to the origin - need to make sure it is working
         // you can also do: Array.sort(points, point[0].slopeOrder();
-        Arrays.sort(points, origin.slopeOrder());
-        //Find the points that have the same slope wrt origin and connect to it via 3 or more other points.
-        int lineSegIns = 0;
-        for (int i = 1; i < points.length; i++) {
-            for (int j = 0; j < points.length; j++) {
-                if (origin.compareTo(points[j]) < 0 && points[i] != points[j] && origin.slopeTo(points[i]) == points[i].slopeTo(points[j])) {
-                    for (int k = 0; k < points.length; k++) {
-                        if (origin.compareTo(points[k]) < 0 && points[i].compareTo(points[k]) < 0 && points[j].compareTo(points[k]) < 0 && points[j].slopeTo(points[k]) == origin.slopeTo(points[k])) {
-                            ls[lineSegIns++] = new LineSegment(points[j], points[k]);
-                            ls[lineSegIns++] = new LineSegment(points[i], points[j]);
-                            ls[lineSegIns++] = new LineSegment(origin, points[i]);
+        for (Point p : points) {
+            Arrays.sort(points, p.slopeOrder());
+            //Find the points that have the same slope wrt origin and connect to it via 3 or more other points.
+            for (int i = 1; i < points.length; i++) {
+                for (int j = 0; j < points.length; j++) {
+                    if (p.compareTo(points[j]) < 0 && points[i] != points[j] && p.slopeTo(points[i]) == points[i].slopeTo(points[j])) {
+                        for (int k = 0; k < points.length; k++) {
+                            if (p.compareTo(points[k]) < 0 && points[i].compareTo(points[k]) < 0 && points[j].compareTo(points[k]) < 0 && points[j].slopeTo(points[k]) == p.slopeTo(points[k])) {
+                                if (lineSegIns >= ls.length) ls = resizeLineSeg(ls, (lineSegIns + 3));
+                                ls[lineSegIns++] = new LineSegment(points[j], points[k]);
+                                ls[lineSegIns++] = new LineSegment(points[i], points[j]);
+                                ls[lineSegIns++] = new LineSegment(p, points[i]);
+
+                            }
                         }
                     }
                 }
             }
         }
         return ls;
+    }
+
+    private static LineSegment[] resizeLineSeg(LineSegment[] lineSegment, int capacity) {
+        LineSegment[] temp = new LineSegment[capacity];
+        for (int i = 0; i < lineSegment.length; i++) {
+            temp[i] = lineSegment[i];
+        }
+        lineSegment = temp;
+        return lineSegment;
     }
 
     public static void main(String[] args) {

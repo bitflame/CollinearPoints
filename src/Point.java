@@ -107,7 +107,7 @@ public class Point implements Comparable<Point> {
         Comparator<Point> com = new Comparator<Point>() {
             @Override
             public int compare(Point o1, Point o2) {
-                if (p.slopeTo(o1) < p.slopeTo(o2)) return 1;
+                if (p.slopeTo(o1) < p.slopeTo(o2)) return 1;//I can use Point.this instead of p here.
                 else if (p.slopeTo(o1) > p.slopeTo(o2)) return -1;
                 else return 0;
             }
