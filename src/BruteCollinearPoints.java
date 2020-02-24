@@ -8,7 +8,7 @@ public class BruteCollinearPoints {
     int pCount = 4;
     Point[] points = new Point[pCount];
     int lineSegIns = 0;
-    private LineSegment[] ls = new LineSegment[3];
+    private LineSegment[] ls = new LineSegment[0];
     //private int lsCount = 0;
 
 
@@ -31,25 +31,36 @@ public class BruteCollinearPoints {
     public LineSegment[] segments() {
         //sort the array based thee slope of points to the origin - need to make sure it is working
         // you can also do: Array.sort(points, point[0].slopeOrder();
-        for (Point p : points) {
-            Arrays.sort(points, p.slopeOrder());
-            //Find the points that have the same slope wrt origin and connect to it via 3 or more other points.
-            for (int i = 1; i < points.length; i++) {
-                for (int j = 0; j < points.length; j++) {
-                    if (p.compareTo(points[j]) < 0 && points[i] != points[j] && p.slopeTo(points[i]) == points[i].slopeTo(points[j])) {
-                        for (int k = 0; k < points.length; k++) {
-                            if (p.compareTo(points[k]) < 0 && points[i].compareTo(points[k]) < 0 && points[j].compareTo(points[k]) < 0 && points[j].slopeTo(points[k]) == p.slopeTo(points[k])) {
-                                if (lineSegIns >= ls.length) ls = resizeLineSeg(ls, (lineSegIns + 3));
-                                ls[lineSegIns++] = new LineSegment(points[j], points[k]);
-                                ls[lineSegIns++] = new LineSegment(points[i], points[j]);
-                                ls[lineSegIns++] = new LineSegment(p, points[i]);
+//        StdOut.println("Default order of points:  ");
+//        for (Point p : points) {
+//            StdOut.println("Point p:  " + p);
+//        }
+        Arrays.sort(points);
+        for (int g = 0; g < points.length; g++) {
 
+
+            Arrays.sort(points, points[g].slopeOrder());
+            //Find the points that have the same slope wrt origin and connect to it via 3 or more other points.
+            for (int i = 0; i < points.length; i++) {
+                if (points[g].compareTo(points[i]) < 0) {
+                    double currentSlope = points[g].slopeTo(points[i]);
+                    for (int j = 0; j < points.length; j++) {
+                        if (points[i].compareTo(points[j]) < 0 && currentSlope == points[i].slopeTo(points[j])) {
+                            for (int k = 0; k < points.length; k++) {
+                                if (points[j].compareTo(points[k]) < 0 &&
+                                        currentSlope == points[j].slopeTo(points[k])) {
+                                    if (lineSegIns >= ls.length) ls = resizeLineSeg(ls, (lineSegIns * 2));
+                                    ls[lineSegIns++] = new LineSegment(points[g], points[k]);
+                                }
                             }
                         }
+
                     }
                 }
+
             }
         }
+        if (ls.length > lineSegIns) ls = resizeLineSeg(ls, lineSegIns);
         return ls;
     }
 
@@ -93,7 +104,8 @@ public class BruteCollinearPoints {
         BruteCollinearPoints collinear = new BruteCollinearPoints(points);
         for (LineSegment segment : collinear.segments()) {
             StdOut.println(segment);
-            segment.draw();
+            if (segment != null)
+                segment.draw();
         }
         StdDraw.show();
     }
